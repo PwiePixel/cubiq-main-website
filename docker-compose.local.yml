@@ -1,0 +1,12 @@
+# Nur zum Ausprobieren auf dem eigenen Rechner – ohne Tunnel und ohne Launcher-Website:
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+# Danach: http://localhost:8080
+services:
+  web:
+    ports:
+      - 127.0.0.1:8080:8080
+
+networks:
+  tunnel:
+    external: false
+    name: cubiq-studio-local

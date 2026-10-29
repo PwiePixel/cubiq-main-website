@@ -1,0 +1,59 @@
+<svg width="0" height="0" class="sr-only" aria-hidden="true">
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
+  <symbol id="i-blocks" viewBox="0 0 24 24"><path d="M4 8l8-4 8 4-8 4-8-4zM4 8v8l8 4V12M20 8v8l-8 4"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 19.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path d="M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c.7-3.5 3.2-5 6-5s5.3 1.5 6 5M16 5.5a3 3 0 0 1 0 5.5M18 15c1.6.7 2.6 2.4 3 5"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path class="icon-fill" d="M12 2.5a9.5 9.5 0 0 0-3 18.5c.5.1.7-.2.7-.5v-1.7c-2.6.6-3.2-1.2-3.2-1.2-.4-1.1-1-1.4-1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.1-.2-4.3-1-4.3-4.7 0-1 .4-1.9 1-2.6-.1-.2-.4-1.2.1-2.5 0 0 .8-.3 2.6 1a9 9 0 0 1 4.8 0c1.8-1.3 2.6-1 2.6-1 .5 1.3.2 2.3.1 2.5.6.7 1 1.6 1 2.6 0 3.7-2.2 4.5-4.3 4.7.3.3.6.8.6 1.6v2.4c0 .3.2.6.7.5A9.5 9.5 0 0 0 12 2.5z"/></symbol>
+</svg>
+
+<a href="#main" class="btn btn-primary skip-link" data-en="Skip to content">Zum Inhalt springen</a>
+
+<header class="site-header">
+  <div class="container header-row">
+    <button type="button" class="menu-button" aria-expanded="false" aria-controls="site-menu" aria-label="Menü" data-en-aria-label="Menu">
+      <svg class="icon icon-menu"><use href="#i-menu"/></svg>
+      <svg class="icon icon-close"><use href="#i-close"/></svg>
+      <span class="label" data-en="Menu">Menü</span>
+    </button>
+
+    <a href="/" class="brand" aria-label="Cubiq Studio">
+      <img src="/assets/img/icon-64.png" alt="" width="32" height="32">
+      <span class="display brand-name">Cubiq Studio</span>
+    </a>
+
+    <div class="header-actions">
+      <div class="lang-switch" role="group" aria-label="Sprache" data-en-aria-label="Language">
+        <button type="button" data-set-lang="de" aria-pressed="true"><img src="/assets/img/flags/de.svg" alt="" width="16" height="12">DE</button>
+        <button type="button" data-set-lang="en" aria-pressed="false"><img src="/assets/img/flags/gb.svg" alt="" width="16" height="12">EN</button>
+      </div>
+      <a href="https://github.com/PwiePixel" class="btn-icon hide-mobile" aria-label="GitHub" rel="noopener" target="_blank">
+        <svg class="icon icon-sm"><use href="#i-github"/></svg>
+      </a>
+      <a href="/#projekte" class="btn btn-primary hide-mobile">
+        <svg class="icon icon-sm"><use href="#i-blocks"/></svg><span data-en="Projects">Projekte</span>
+      </a>
+    </div>
+
+    <nav id="site-menu" class="menu-panel" aria-label="Menü" data-en-aria-label="Menu" hidden>
+      <ul class="menu-grid">
+        <li><a href="/#projekte" class="menu-link"><svg class="icon"><use href="#i-blocks"/></svg><span data-en="Projects">Projekte</span></a></li>
+        <li><a href="/#studio" class="menu-link"><svg class="icon"><use href="#i-heart"/></svg><span data-en="About the studio">Über das Studio</span></a></li>
+        <li><a href="/#kontakt" class="menu-link"><svg class="icon"><use href="#i-mail"/></svg><span data-en="Contact">Kontakt</span></a></li>
+        <li><a href="https://github.com/PwiePixel" class="menu-link" rel="noopener" target="_blank"><svg class="icon"><use href="#i-github"/></svg><span>GitHub</span></a></li>
+      </ul>
+      <p class="menu-heading" data-en="Our projects">Unsere Projekte</p>
+      <!-- Neues Projekt: hier eine Zeile ergänzen (und in index.html eine Karte). -->
+      <ul class="menu-grid">
+        <li><a href="https://launcher.cubiq.studio" class="menu-link menu-link-sm" data-lang-link>Cubiq Launcher</a></li>
+        <li><a href="https://github.com/PwiePixel/Cubiq" class="menu-link menu-link-sm" rel="noopener" target="_blank">Cubiq Server</a></li>
+        <li><a href="https://on-your.site" class="menu-link menu-link-sm" rel="noopener" target="_blank">OnYourSite</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

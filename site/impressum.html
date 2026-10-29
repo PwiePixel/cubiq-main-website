@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <!--#include head-->
+  <title data-en="Imprint – Cubiq Studio">Impressum – Cubiq Studio</title>
+  <meta name="description" content="Angaben gemäß § 5 DDG zu Cubiq Studio." data-en-content="Information about Cubiq Studio pursuant to § 5 DDG.">
+  <link rel="canonical" href="%%SITE_URL%%/impressum">
+</head>
+<body>
+  <!--#include header-->
+
+  <main id="main">
+    <section class="page-head">
+      <div class="scene scene-fill" aria-hidden="true">
+        <div class="scene-base"></div>
+        <div class="scene-grid"></div>
+        <div class="scene-cubes"></div>
+        <div class="scene-glow"></div>
+      </div>
+      <div class="container">
+        <h1 class="display" data-en="Imprint">Impressum</h1>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="legal">
+        <h2 data-en="Information pursuant to § 5 DDG (German Digital Services Act)">Angaben gemäß § 5 DDG</h2>
+        <p data-en="The operator details are still missing – they are added when the server is set up.">Die Angaben zum Betreiber fehlen noch – sie werden beim Einrichten des Servers eingetragen.</p> <!--unless:OPERATOR_NAME-->
+        <div class="card operator"> <!--if:OPERATOR_NAME-->
+          <p> <!--if:OPERATOR_NAME-->
+            <strong>%%OPERATOR_NAME%%</strong><br> <!--if:OPERATOR_NAME-->
+            <span data-en="Represented by:">Vertreten durch:</span> %%OPERATOR_REPRESENTATIVE%%<br> <!--if:OPERATOR_REPRESENTATIVE-->
+            %%OPERATOR_ADDRESS%% <!--if:OPERATOR_ADDRESS-->
+          </p> <!--if:OPERATOR_NAME-->
+        </div> <!--if:OPERATOR_NAME-->
+
+        <h2 data-en="Contact">Kontakt</h2>
+        <p>
+          <span data-en="Email:">E-Mail:</span> <a href="mailto:%%OPERATOR_EMAIL%%">%%OPERATOR_EMAIL%%</a><br> <!--if:OPERATOR_EMAIL-->
+          <span data-en="Phone:">Telefon:</span> %%OPERATOR_PHONE%% <!--if:OPERATOR_PHONE-->
+        </p>
+
+        <p data-en-html="How we handle personal data is described in the <a href='/datenschutz'>privacy policy</a>.">Wie wir mit personenbezogenen Daten umgehen, steht in der <a href="/datenschutz">Datenschutzerklärung</a>.</p>
+        <p data-en="Cubiq is not an official Minecraft product and is not approved by or associated with Mojang or Microsoft.">Cubiq ist kein offizielles Minecraft-Produkt und weder von Mojang noch von Microsoft genehmigt oder mit ihnen verbunden.</p>
+      </div>
+    </div>
+  </main>
+
+  <!--#include footer-->
+</body>
+</html>
