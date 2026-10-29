@@ -330,6 +330,8 @@ compose() { (cd "$SRC" && docker compose "$@"); }
 
 start() {
   sync_operator
+  # Vor dem Team-Bereich eingerichtet: Ordner für Zugänge und Team-Seite nachtragen.
+  [ -n "$(env_get "$ENV_FILE" STUDIO_PRIVATE)" ] || env_set "$ENV_FILE" STUDIO_PRIVATE "$PRIVATE"
   mkdir -p "$DATA" "$PRIVATE"
   chmod 755 "$DATA"
   chown "$NODE_UID:$NODE_UID" "$PRIVATE"
