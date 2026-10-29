@@ -19,12 +19,15 @@ services:
         OPERATOR_AUTHORITY: ${OPERATOR_AUTHORITY:-}
     image: cubiq-studio:latest
     restart: unless-stopped
+    depends_on:
+      - studio-api
     volumes:
       # Versionsnummern (feed.json), die deploy/studio-server.sh morgens und abends schreibt.
       - ${STUDIO_DATA:-./data}:/srv/data:ro
     networks:
       tunnel:
         aliases: [studio]
+      internal: {}
     read_only: true
     tmpfs:
       - /tmp
@@ -37,8 +40,37 @@ services:
       driver: json-file
       options: { max-size: 5m, max-file: '2' }
 
+  # Team-Seite und Team-Bereich (/admin): Anmeldung mit Benutzername und Passwort (api/server.mjs).
+  # Nur nginx erreicht ihn; Zugänge und Team-Seite liegen als JSON in STUDIO_PRIVATE (nicht öffentlich).
+  studio-api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:24-alpine}
+    image: cubiq-studio-api:latest
+    restart: unless-stopped
+    volumes:
+      - ${STUDIO_PRIVATE:-./private}:/data
+    networks:
+      - internal
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 192m
+    pids_limit: 64
+    logging:
+      driver: json-file
+      options: { max-size: 5m, max-file: '2' }
+
 networks:
   # Gehört zur Launcher-Website (Projekt cubiq-api) – nur cloudflared und die Websites, ohne Verbindung nach außen.
   tunnel:
     external: true
     name: ${TUNNEL_NETWORK:-cubiq-api_tunnel}
+  # Nur nginx ↔ Team-Server.
+  internal:
+    internal: true

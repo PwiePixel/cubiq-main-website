@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <!--#include head-->
+  <title>Team-Bereich – Cubiq Studio</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="/assets/js/admin.js?v=%%STUDIO_VERSION%%" defer></script>
+</head>
+<body>
+  <!--#include header-->
+
+  <!-- Team-Bereich: nirgends verlinkt. Anmeldung mit Benutzername und Passwort (api/server.mjs). -->
+  <main id="main">
+    <section class="page-head">
+      <div class="scene scene-fill" aria-hidden="true">
+        <div class="scene-base"></div>
+        <div class="scene-grid"></div>
+        <div class="scene-cubes"></div>
+        <div class="scene-glow"></div>
+      </div>
+      <div class="container">
+        <span class="kicker">Cubiq Studio</span>
+        <h1 class="display page-title">Team-Bereich</h1>
+        <p class="lead page-lead" data-who>Nur für das Team.</p>
+      </div>
+    </section>
+
+    <div class="container admin">
+      <form class="card admin-card admin-login" data-login hidden>
+        <h2 class="heading">Anmelden</h2>
+        <label class="label" for="login-name">Benutzername</label>
+        <input id="login-name" class="field" name="name" autocomplete="username" required>
+        <label class="label" for="login-password">Passwort</label>
+        <input id="login-password" class="field" name="password" type="password" autocomplete="current-password" required>
+        <p class="form-msg" data-msg hidden></p>
+        <button type="submit" class="btn btn-primary btn-md">Anmelden</button>
+      </form>
+
+      <div data-app hidden>
+        <div class="admin-bar">
+          <span data-me></span>
+          <a href="/team" class="btn btn-ghost">Team-Seite ansehen</a>
+          <button type="button" class="btn btn-ghost" data-logout>Abmelden</button>
+        </div>
+
+        <section class="card admin-card" aria-labelledby="members-title">
+          <h2 id="members-title" class="heading">Team-Seite</h2>
+          <p class="admin-hint">Reihenfolge wie auf der Seite. Englische Texte sind optional – ohne sie steht dort der deutsche.</p>
+          <div class="member-editors" data-members></div>
+          <div class="admin-actions">
+            <button type="button" class="btn btn-ghost" data-add-member>Mitglied hinzufügen</button>
+            <button type="button" class="btn btn-primary" data-save-team>Speichern</button>
+            <span class="form-msg" data-team-msg></span>
+          </div>
+        </section>
+
+        <section class="card admin-card" aria-labelledby="users-title" data-admin-only hidden>
+          <h2 id="users-title" class="heading">Zugänge</h2>
+          <p class="admin-hint">Admins verwalten Team-Seite und Zugänge, Team-Mitglieder nur die Team-Seite.</p>
+          <ul class="user-list" data-users></ul>
+          <form class="user-add" data-add-user>
+            <input class="field" name="name" placeholder="Benutzername" autocomplete="off" required>
+            <input class="field" name="password" type="password" placeholder="Passwort (mind. 10 Zeichen)" autocomplete="new-password" required>
+            <select class="field" name="role">
+              <option value="team">Team</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Anlegen</button>
+          </form>
+          <p class="form-msg" data-users-msg></p>
+        </section>
+
+        <form class="card admin-card" data-password aria-labelledby="password-title">
+          <h2 id="password-title" class="heading">Mein Passwort</h2>
+          <div class="password-grid">
+            <input class="field" name="current" type="password" placeholder="Aktuelles Passwort" autocomplete="current-password" required>
+            <input class="field" name="password" type="password" placeholder="Neues Passwort (mind. 10 Zeichen)" autocomplete="new-password" required>
+            <input class="field" name="repeat" type="password" placeholder="Neues Passwort wiederholen" autocomplete="new-password" required>
+            <button type="submit" class="btn btn-primary">Ändern</button>
+          </div>
+          <p class="form-msg" data-password-msg></p>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!--#include footer-->
+</body>
+</html>

@@ -73,6 +73,7 @@
     }
     translate()
     localizeLinks()
+    renderTeam()
     document.querySelectorAll('[data-set-lang]').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.getAttribute('data-set-lang') === lang))
     })
@@ -167,16 +168,22 @@
   var hero = document.querySelector('[data-hero]')
   if (hero) {
     var scene = hero.querySelector('.scene')
+    var glow = hero.querySelector('.hero-glow')
     var cta = hero.querySelector('[data-cta]')
     drawCubes(hero.querySelector('.scene-cubes'), window.innerWidth < 640 ? 3 : 4, 0x7e5)
-    // Der Schein sitzt hinter dem Hauptknopf und leuchtet heller, solange man darauf zeigt.
-    var measure = function () {
-      if (!cta || !scene) return
-      var box = scene.getBoundingClientRect()
+    // Der Schein sitzt hinter dem Hauptknopf und leuchtet heller, solange man darauf zeigt. Er reicht über den
+    // Startbereich hinaus und läuft weich aus – das Raster der Szene richtet sich nach demselben Punkt.
+    var anchor = function (node) {
+      if (!node || !cta) return
+      var box = node.getBoundingClientRect()
       var a = cta.getBoundingClientRect()
       if (box.width < 1 || box.height < 1) return
-      scene.style.setProperty('--fx', Math.min(100, Math.max(0, ((a.left + a.width / 2 - box.left) / box.width) * 100)) + '%')
-      scene.style.setProperty('--fy', Math.min(100, Math.max(0, ((a.top + a.height / 2 - box.top) / box.height) * 100)) + '%')
+      node.style.setProperty('--fx', Math.min(100, Math.max(0, ((a.left + a.width / 2 - box.left) / box.width) * 100)) + '%')
+      node.style.setProperty('--fy', Math.min(100, Math.max(0, ((a.top + a.height / 2 - box.top) / box.height) * 100)) + '%')
+    }
+    var measure = function () {
+      anchor(scene)
+      anchor(glow)
     }
     measure()
     window.addEventListener('resize', measure)
@@ -329,6 +336,82 @@
       })
       .catch(function () {
         // Ohne Daten bleiben die Abzeichen einfach weg.
+      })
+  }
+
+  // ---------------------------------------------------------------- Team-Seite (/api/team, gepflegt im Team-Bereich)
+
+  var AVATAR_COLORS = ['green', 'lime', 'amber', 'blue', 'violet', 'rose']
+  var team = null
+
+  function pick(texts) {
+    texts = texts || {}
+    return texts[lang] || texts.de || texts.en || ''
+  }
+
+  function initials(name) {
+    var parts = String(name).split(/[\s_.-]+/).filter(Boolean)
+    return ((parts[0] || '?').charAt(0) + (parts[1] ? parts[1].charAt(0) : '')).toUpperCase()
+  }
+
+  function node(tag, cls, text) {
+    var n = document.createElement(tag)
+    if (cls) n.className = cls
+    if (text != null) n.textContent = text
+    return n
+  }
+
+  function renderTeam() {
+    var list = document.querySelector('[data-team]')
+    if (!list || !team) return
+    list.textContent = ''
+    team.forEach(function (m) {
+      var item = node('li', 'card member')
+      var color = AVATAR_COLORS.indexOf(m.color) >= 0 ? m.color : 'green'
+      item.style.setProperty('--c', 'var(--avatar-' + color + ')')
+      var top = node('div', 'member-top')
+      var avatar = node('span', 'avatar', initials(m.name))
+      avatar.setAttribute('aria-hidden', 'true')
+      top.appendChild(avatar)
+      var who = node('div')
+      who.appendChild(node('h2', 'member-name', m.name))
+      if (pick(m.role)) who.appendChild(node('p', 'member-role', pick(m.role)))
+      top.appendChild(who)
+      item.appendChild(top)
+      if (pick(m.about)) item.appendChild(node('p', 'member-about', pick(m.about)))
+      var links = (m.links || []).filter(function (l) {
+        return l && /^(https:|mailto:)/.test(String(l.url))
+      })
+      if (links.length) {
+        var row = node('div', 'member-links')
+        links.forEach(function (l) {
+          var a = node('a', 'member-link', l.label)
+          a.href = l.url
+          if (/^https:/.test(l.url)) {
+            a.target = '_blank'
+            a.rel = 'noopener nofollow'
+          }
+          row.appendChild(a)
+        })
+        item.appendChild(row)
+      }
+      list.appendChild(item)
+    })
+    var empty = document.querySelector('[data-team-empty]')
+    if (empty) empty.hidden = team.length > 0
+  }
+
+  if (document.querySelector('[data-team]') && window.fetch) {
+    fetch('/api/team', { cache: 'no-cache' })
+      .then(function (res) {
+        return res.ok ? res.json() : { members: [] }
+      })
+      .catch(function () {
+        return { members: [] }
+      })
+      .then(function (data) {
+        team = Array.isArray(data.members) ? data.members : []
+        renderTeam()
       })
   }
 
