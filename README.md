@@ -1,7 +1,7 @@
 # Cubiq Studio – Website
 
 Die Hauptwebsite von **Cubiq Studio** (`cubiq.studio`): das Studio und seine Projekte – der Cubiq Launcher, die
-Server-Software Cubiq (in Entwicklung) und OnYourSite (in Zusammenarbeit). Im selben Design wie die
+Server-Software Cubiq (in Entwicklung) und OnYourSite (wir entwickeln mit) – dazu eine Team-Seite. Im selben Design wie die
 [Launcher-Website](https://github.com/PwiePixel/Cubiq-Website), auf Deutsch und Englisch, ohne Cookies und ohne
 Tracking. Sie läuft auf demselben Server wie die Launcher-Website und schaut dort jeden Morgen und jeden Abend selbst
 nach Updates.
@@ -11,6 +11,7 @@ nach Updates.
 | [`site/`](site) | Die Website: Startseite (`index.html`), Impressum, Datenschutz, 404-Seite, `assets/` (CSS, Skripte, Bilder, Schrift) |
 | [`site/_partials/`](site/_partials) | Kopf (`head.html`), Kopfzeile mit Menü (`header.html`) und Fußzeile (`footer.html`) – stehen nur hier |
 | [`site/assets/img/projects/`](site/assets/img/projects) | Bilder der Projekte (16:10, z. B. Screenshots der Websites) |
+| [`api/server.mjs`](api/server.mjs) | Team-Server: Team-Seite und Team-Bereich (`/admin`) mit Benutzername und Passwort – Node ohne Pakete |
 | [`deploy/studio-server.sh`](deploy/studio-server.sh) | Einrichten und Betrieb auf dem Server, automatische Updates |
 | [`deploy/render.sh`](deploy/render.sh) | Setzt beim Bauen Kopf- und Fußzeile, Adresse, Version und Impressum ein |
 | `Dockerfile`, `docker-compose.yml`, [`deploy/nginx.conf`](deploy/nginx.conf) | Webserver (nginx ohne Root-Rechte) im Container |
@@ -42,6 +43,25 @@ sudo bash /opt/cubiq/cubiq-main-website/deploy/studio-server.sh status
 ```
 
 (statt `status` auch `update`, `update force`, `restart` oder `logs`).
+
+## Team-Seite und Team-Bereich
+
+`cubiq.studio/team` zeigt das Team. Gepflegt wird es im **Team-Bereich `cubiq.studio/admin`** – nirgends verlinkt und
+für Suchmaschinen gesperrt. Anmeldung mit **Benutzername und Passwort** (kein Microsoft-Login):
+
+- **Admins** bearbeiten die Team-Seite und legen Zugänge an (Rolle „Team“ oder „Admin“), setzen Passwörter neu und
+  löschen Zugänge. **Team-Mitglieder** bearbeiten nur die Team-Seite. Jeder kann sein eigenes Passwort ändern.
+- Den ersten Admin fragt das Skript beim Einrichten ab. Neuer Zugang oder Passwort vergessen, direkt auf dem Server:
+
+  ```bash
+  sudo bash /opt/cubiq/cubiq-main-website/deploy/studio-server.sh user <Name> [admin|team]
+  ```
+
+- Daten: `/opt/cubiq/studio-private` (`users.json` mit Passwörtern nur als scrypt-Hash, `team.json`) – nicht
+  öffentlich, bei jedem Update gesichert nach `/opt/cubiq/backups/studio-*.tar.gz` (die letzten 14 bleiben).
+- Schutz: Sitzungs-Cookie `HttpOnly`, `Secure`, `SameSite=Strict` (12 Stunden), höchstens 10 Fehlversuche je
+  IP-Adresse und Name in 15 Minuten, Änderungen nur von der eigenen Seite. Der Team-Server ist nur über nginx
+  erreichbar, nie direkt.
 
 ## Updates morgens und abends
 
@@ -81,8 +101,15 @@ Ablaufdatum wählen.
 docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 ```
 
-Dann http://localhost:8080. Ohne Docker geht es auch, nur ohne saubere Adressen (`/impressum.html` statt
-`/impressum`):
+Dann http://localhost:8080. Für den Team-Bereich vorher `mkdir -p private && sudo chown 1000:1000 private` und danach
+einen Zugang anlegen:
+
+```bash
+printf 'mindestens-10-zeichen' | docker compose exec -T studio-api node server.mjs user Admin admin
+```
+
+Ohne Docker geht es auch, nur ohne saubere Adressen (`/impressum.html` statt `/impressum`) und ohne
+Team-Bereich:
 
 ```bash
 sh deploy/render.sh site .preview && python3 -m http.server -d .preview 8080

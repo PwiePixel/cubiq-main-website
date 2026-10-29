@@ -8,6 +8,8 @@
 #   sudo bash studio-server.sh restart    neu bauen und starten (z. B. nach Änderungen an der .env)
 #   sudo bash studio-server.sh status     Zustand anzeigen
 #   sudo bash studio-server.sh logs       Logs ansehen (Strg+C beendet)
+#   sudo bash studio-server.sh user <Name> [admin|team]
+#                                        Zugang zum Team-Bereich (/admin) anlegen oder Passwort neu setzen
 #
 # Nach dem Einrichten schaut der Server jeden Morgen (6:15) und jeden Abend (18:15, Serverzeit) selbst nach Updates
 # (/etc/cron.d/cubiq-studio): Code von GitHub mit deinem Token, Versionsnummern von der Launcher-Website und GitHub.
@@ -24,6 +26,10 @@ BASE="${CUBIQ_DIR:-/opt/cubiq}"
 SRC="$BASE/cubiq-main-website"
 ENV_FILE="$SRC/.env"
 DATA="$BASE/studio-data"
+# Zugänge und Team-Seite des Team-Bereichs (nicht öffentlich, gehört dem Benutzer „node“ im Container).
+PRIVATE="$BASE/studio-private"
+NODE_UID=1000
+BACKUPS="$BASE/backups"
 TOKEN_FILE="$BASE/.github-token-studio"
 LOG_FILE="$BASE/studio-cron.log"
 LOCK_FILE="$BASE/.studio.lock"
@@ -203,6 +209,7 @@ configure() {
   [ -n "$site" ] || die "Die Website braucht eine Adresse."
   env_set "$ENV_FILE" SITE_URL "https://$site"
   env_set "$ENV_FILE" STUDIO_DATA "$DATA"
+  env_set "$ENV_FILE" STUDIO_PRIVATE "$PRIVATE"
   env_set "$ENV_FILE" TUNNEL_NETWORK "$TUNNEL_NETWORK"
   sync_operator
   if [ -n "$(env_get "$ENV_FILE" OPERATOR_NAME)" ]; then
@@ -323,24 +330,28 @@ compose() { (cd "$SRC" && docker compose "$@"); }
 
 start() {
   sync_operator
-  mkdir -p "$DATA"
+  mkdir -p "$DATA" "$PRIVATE"
   chmod 755 "$DATA"
+  chown "$NODE_UID:$NODE_UID" "$PRIVATE"
+  chmod 700 "$PRIVATE"
   # Version für die Adressen von CSS und Skripten (?v=…): nach einem Update holt jeder Browser die neuen Dateien.
   STUDIO_VERSION=$(git -C "$SRC" rev-parse --short HEAD)
   export STUDIO_VERSION
   say "Studio-Website bauen und starten …"
   compose build --pull --quiet
   compose up -d --remove-orphans
-  local state=starting
-  for _ in $(seq 1 24); do
-    state=$(docker inspect -f '{{.State.Health.Status}}' "$PROJECT-web-1" 2>/dev/null || echo starting)
-    [ "$state" = healthy ] && break
-    sleep 5
+  local state=starting service
+  for service in web studio-api; do
+    for _ in $(seq 1 24); do
+      state=$(docker inspect -f '{{.State.Health.Status}}' "$PROJECT-$service-1" 2>/dev/null || echo starting)
+      [ "$state" = healthy ] && break
+      sleep 5
+    done
+    if [ "$state" != healthy ]; then
+      compose logs --tail 40 "$service" || true
+      die "Die Studio-Website ist nicht hochgekommen ($service, Logs oben)."
+    fi
   done
-  if [ "$state" != healthy ]; then
-    compose logs --tail 40 web || true
-    die "Die Studio-Website ist nicht hochgekommen (Logs oben)."
-  fi
   touch "$STAMP"
   docker image prune -f >/dev/null 2>&1 || true
   say "Studio-Website läuft (Stand $STUDIO_VERSION)."
@@ -386,6 +397,52 @@ refresh_feed() {
   chmod 644 "$DATA/feed.json.tmp"
   mv "$DATA/feed.json.tmp" "$DATA/feed.json"
   say "Versionsnummern aktualisiert (Launcher $(jq -r '.launcher.version // "–"' <<<"$out"), Server $(jq -r '.server.version // "–"' <<<"$out"))."
+}
+
+# ask_password VAR "Frage" – zweimal, ohne Anzeige, mindestens 10 Zeichen.
+ask_password() {
+  local __var=$1 __q=$2 __a __b
+  while true; do
+    ask_secret __a "$__q (mindestens 10 Zeichen)"
+    ask_secret __b "    Noch einmal"
+    if [ "$__a" != "$__b" ]; then
+      warn "Die beiden Eingaben sind verschieden."
+    elif [ ${#__a} -lt 10 ]; then
+      warn "Zu kurz."
+    else
+      break
+    fi
+  done
+  printf -v "$__var" '%s' "$__a"
+}
+
+# Zugang zum Team-Bereich anlegen oder Passwort neu setzen (das Passwort geht über stdin, nie als Argument).
+set_user() {
+  local name=$1 role=${2:-admin} password
+  [[ $name =~ ^[A-Za-z0-9_.-]{3,32}$ ]] || die "„$name“: 3–32 Zeichen aus Buchstaben, Ziffern, _ . -"
+  [[ $role =~ ^(admin|team)$ ]] || die "Rolle: admin oder team"
+  ask_password password "Passwort für $name"
+  printf '%s' "$password" | compose exec -T studio-api node server.mjs user "$name" "$role" ||
+    die "Zugang nicht gespeichert (läuft die Studio-Website? sudo bash $SRC/deploy/studio-server.sh status)."
+}
+
+# Beim Einrichten: Gibt es noch keinen Zugang, den ersten Admin anlegen.
+ensure_admin() {
+  [ -z "$(compose exec -T studio-api node server.mjs users 2>/dev/null)" ] || return 0
+  echo
+  say "Team-Bereich ($(env_get "$ENV_FILE" SITE_URL)/admin, nirgends verlinkt): ersten Admin-Zugang anlegen."
+  local name
+  ask name "Benutzername" "PixelCST"
+  set_user "$name" admin
+}
+
+# Zugänge und Team-Seite sichern (die letzten 14 Sicherungen bleiben).
+backup_private() {
+  [ -n "$(ls -A "$PRIVATE" 2>/dev/null)" ] || return 0
+  mkdir -p "$BACKUPS"
+  chmod 700 "$BACKUPS"
+  tar czf "$BACKUPS/studio-$(date +%Y-%m-%d-%H%M).tar.gz" -C "$BASE" "$(basename "$PRIVATE")" || warn "Sicherung der Team-Daten fehlgeschlagen."
+  { ls -1t "$BACKUPS"/studio-*.tar.gz 2>/dev/null || true; } | tail -n +15 | xargs -r rm -f
 }
 
 schedule() {
@@ -438,6 +495,7 @@ update() {
   fi
   ensure_ingress
   refresh_feed
+  backup_private
 }
 
 status() {
@@ -455,6 +513,8 @@ summary() {
   echo "    Studio-Website:  $(env_get "$ENV_FILE" SITE_URL)"
   echo "    Updates:         jeden Morgen (6:15) und Abend (18:15) – neuer Stand auf GitHub wird gebaut,"
   echo "                     die Versionsnummern werden aufgefrischt. Log: $LOG_FILE"
+  echo "    Team-Bereich:    $(env_get "$ENV_FILE" SITE_URL)/admin (nirgends verlinkt)"
+  echo "                     Passwort vergessen: sudo bash $SRC/deploy/studio-server.sh user <Name>"
   echo "    Impressum:       aus $LAUNCHER_ENV (NUXT_PUBLIC_OPERATOR_*)"
   echo "    Einstellungen:   $ENV_FILE – danach: sudo bash $SRC/deploy/studio-server.sh restart"
 }
@@ -466,6 +526,7 @@ install() {
   configure
   tunnel
   start
+  ensure_admin
   refresh_feed
   schedule
   reachable
@@ -483,8 +544,12 @@ main() {
       refresh_feed
       ;;
     status) status ;;
-    logs) compose logs -f --tail 100 web ;;
-    *) die "Unbekannter Befehl „$1“ – erlaubt: install, update, restart, status, logs" ;;
+    logs) compose logs -f --tail 100 ;;
+    user)
+      [ -n "${2:-}" ] || die "Aufruf: sudo bash $0 user <Name> [admin|team]"
+      set_user "$2" "${3:-admin}"
+      ;;
+    *) die "Unbekannter Befehl „$1“ – erlaubt: install, update, restart, status, logs, user" ;;
   esac
 }
 
