@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <!--#include head-->
+  <title data-en="Privacy – Cubiq Studio">Datenschutz – Cubiq Studio</title>
+  <meta name="description" content="Datenschutzerklärung von Cubiq Studio: keine Cookies, kein Tracking, keine fremden Server." data-en-content="Privacy policy of Cubiq Studio: no cookies, no tracking, no third-party servers.">
+  <link rel="canonical" href="%%SITE_URL%%/datenschutz">
+</head>
+<body>
+  <!--#include header-->
+
+  <main id="main">
+    <section class="page-head">
+      <div class="scene scene-fill" aria-hidden="true">
+        <div class="scene-base"></div>
+        <div class="scene-grid"></div>
+        <div class="scene-cubes"></div>
+        <div class="scene-glow"></div>
+      </div>
+      <div class="container">
+        <h1 class="display" data-en="Privacy policy">Datenschutzerklärung</h1>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="legal">
+        <p class="updated" data-en="Last updated: 29 October 2026">Stand: 29. Oktober 2026</p>
+        <p data-en-html="This policy covers this website (<strong>Cubiq Studio</strong>). In short: no cookies, no tracking, no analytics, no ads and nothing from third-party servers.">Diese Erklärung gilt für diese Website (<strong>Cubiq Studio</strong>). Kurz gesagt: keine Cookies, kein Tracking, keine Analyse, keine Werbung und nichts von fremden Servern.</p>
+        <p data-en-html="The Cubiq Launcher, the Cubiq Client and the Cubiq services are covered by the <a href='https://launcher.cubiq.studio/privacy' data-lang-link>privacy policy of the launcher website</a>.">Für den Cubiq Launcher, den Cubiq Client und die Cubiq-Dienste gilt die <a href="https://launcher.cubiq.studio/privacy" data-lang-link>Datenschutzerklärung der Launcher-Website</a>.</p>
+
+        <h2 data-en="Controller">Verantwortlicher</h2>
+        <p data-en="The operator details are still missing – they are added when the server is set up.">Die Angaben zum Betreiber fehlen noch – sie werden beim Einrichten des Servers eingetragen.</p> <!--unless:OPERATOR_NAME-->
+        <div class="card operator"> <!--if:OPERATOR_NAME-->
+          <p> <!--if:OPERATOR_NAME-->
+            <strong>%%OPERATOR_NAME%%</strong><br> <!--if:OPERATOR_NAME-->
+            %%OPERATOR_ADDRESS%%<br> <!--if:OPERATOR_ADDRESS-->
+            <a href="mailto:%%OPERATOR_EMAIL%%">%%OPERATOR_EMAIL%%</a> <!--if:OPERATOR_EMAIL-->
+          </p> <!--if:OPERATOR_NAME-->
+        </div> <!--if:OPERATOR_NAME-->
+        <p data-en-html="All details are in the <a href='/impressum'>imprint</a>.">Alle Angaben stehen im <a href="/impressum">Impressum</a>.</p>
+
+        <h2 data-en="Hosting and Cloudflare">Hosting und Cloudflare</h2>
+        <p data-en-html="The website runs on a server of the controller. It is reachable only through a <strong>Cloudflare Tunnel</strong>: Cloudflare (Cloudflare, Inc. / Cloudflare Germany GmbH) terminates the HTTPS connection and processes your IP address and the requests on our behalf under its data processing addendum. Transfers to the USA are covered by the EU-US Data Privacy Framework and standard contractual clauses. Legal basis: Art. 6(1)(f) GDPR (a secure, working website).">Die Website läuft auf einem Server des Verantwortlichen. Erreichbar ist er nur über einen <strong>Cloudflare Tunnel</strong>: Cloudflare (Cloudflare, Inc. / Cloudflare Germany GmbH) beendet die HTTPS-Verbindung und verarbeitet dabei in unserem Auftrag deine IP-Adresse und die Anfragen gemäß dem Data Processing Addendum von Cloudflare. Übermittlungen in die USA sind durch das EU-US Data Privacy Framework und Standardvertragsklauseln abgedeckt. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (eine sichere, funktionierende Website).</p>
+
+        <h2 data-en="Server logs">Server-Logs</h2>
+        <p data-en-html="Our web server only logs the time, method, path without query, status, size and duration of a request – <strong>no IP addresses and no browser identifiers</strong>. The logs are limited to a few megabytes and are overwritten continuously.">Unser Webserver protokolliert nur Zeitpunkt, Methode, Pfad ohne Query, Status, Größe und Dauer einer Anfrage – <strong>keine IP-Adressen und keine Browser-Kennungen</strong>. Die Logs sind auf wenige Megabyte begrenzt und werden fortlaufend überschrieben.</p>
+
+        <h2 data-en="Cookies and local storage">Cookies und lokaler Speicher</h2>
+        <p data-en-html="The website sets <strong>no cookies</strong>. If you pick a language at the top, your browser remembers it in local storage (<code>localStorage</code>, entry <code>cubiq-studio-lang</code>); it is never sent to us. This is strictly necessary for the function you asked for (§ 25(2) no. 2 TDDDG). You can delete the entry in your browser at any time.">Die Website setzt <strong>keine Cookies</strong>. Wählst du oben eine Sprache, merkt sich dein Browser diese Wahl im lokalen Speicher (<code>localStorage</code>, Eintrag <code>cubiq-studio-lang</code>); er wird nie an uns übertragen. Das ist für die gewünschte Funktion unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst den Eintrag jederzeit in deinem Browser löschen.</p>
+
+        <h2 data-en="Fonts, scripts and version numbers">Schriften, Skripte und Versionsnummern</h2>
+        <p data-en-html="Fonts, scripts and images come from this server – <strong>no external CDNs, no Google Fonts, no analytics or advertising services</strong>. Every morning and evening our server fetches the version numbers on the start page from the Cubiq Launcher website and the public GitHub API and stores them here – without any data about you. Your browser loads them only from this server.">Schriften, Skripte und Bilder kommen von diesem Server – <strong>keine externen CDNs, keine Google Fonts, keine Analyse- oder Werbedienste</strong>. Die Versionsnummern auf der Startseite holt unser Server morgens und abends von der Website des Cubiq Launchers und von der öffentlichen GitHub-API und legt sie hier ab – ohne Daten über dich. Dein Browser lädt sie nur von diesem Server.</p>
+
+        <h2 data-en="Links">Links</h2>
+        <p data-en-html="Links to GitHub, OnYourSite and the launcher website are plain links. Only when you click one does your browser connect to that site; its privacy policy applies there.">Links zu GitHub, OnYourSite und der Launcher-Website sind einfache Links. Erst wenn du einen anklickst, verbindet sich dein Browser mit der jeweiligen Seite; dort gilt deren Datenschutzerklärung.</p>
+
+        <h2 data-en="Your rights">Deine Rechte</h2>
+        <p data-en-html="You have the right of access (Art. 15 GDPR), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18), data portability (Art. 20) and to object to processing based on Art. 6(1)(f) GDPR (Art. 21). Write to us at the address above. You can also lodge a complaint with a data protection supervisory authority (Art. 77 GDPR).">Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch gegen Verarbeitungen auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (Art. 21). Schreib uns dazu an die oben genannte Adresse. Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77 DSGVO).</p>
+        <p><span data-en="Competent supervisory authority:">Zuständige Aufsichtsbehörde:</span> %%OPERATOR_AUTHORITY%%</p> <!--if:OPERATOR_AUTHORITY-->
+      </div>
+    </div>
+  </main>
+
+  <!--#include footer-->
+</body>
+</html>
